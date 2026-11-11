@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>无 Cache-Control 缓存测试</title>
+</head>
+<body>
+  <h1>无 Cache-Control 的 HTML</h1>
+  <p>这个响应没有 <code>Cache-Control</code>。服务器只带了较早的 <code>Last-Modified</code>，浏览器会按启发式新鲜期决定要不要直接用本地副本。</p>
+  <p id="result">正在判断这次是网络还是缓存…</p>
+  <p><a href="/">再访问一次本页</a>。用点击，不要按刷新。刷新会带 <code>max-age=0</code>，强制去服务器确认。开发者工具里的 Disable cache 也要关掉。</p>
+  <script>
+    addEventListener('load', () => {
+      const nav = performance.getEntriesByType('navigation')[0];
+      const fromCache = nav.transferSize === 0 && nav.decodedBodySize > 0;
+      document.getElementById('result').textContent = fromCache
+        ? '这次从缓存读取（transferSize = 0）'
+        : '这次从网络读取（transferSize = ' + nav.transferSize + ' 字节）';
+    });
+  </script>
+</body>
+</html>
